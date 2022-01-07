@@ -60,3 +60,8 @@ async def get_pyjs(message: types.Message):
     with open("src/data/pyjs.jpg", "rb") as file:
         image = file.read()
     await bot.send_photo(message.chat.id, photo=image)
+
+
+@dp.message_handler(text="hello")
+async def hello(message: types.Message):
+    await bot.send_message(message.chat.id, text=f"{message.chat.id}")
