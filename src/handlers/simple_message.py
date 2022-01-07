@@ -62,6 +62,11 @@ async def get_pyjs(message: types.Message):
     await bot.send_photo(message.chat.id, photo=image)
 
 
-@dp.message_handler(text="hello")
+@dp.message_handler(text=["Максим", "максим", "Макс", "макс"])
 async def hello(message: types.Message):
-    await bot.send_message(message.chat.id, text=f"{message.chat.id}")
+    sticker = "CAACAgIAAxkBAAEDoflh2CqUHby5Nfyui9G7kaP" \
+              "E4AxfrwACHAIAAqzRchNIr_rSmKNEVyME"
+    await bot.send_message(
+        message.chat.id, text="@kozenkodev ХУЙЛО, ГОВНОКОДЕР!!!"
+    )
+    await bot.send_sticker(message.chat.id, sticker)
