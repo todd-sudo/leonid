@@ -5,7 +5,7 @@ from config import CHAT_ID, BD_STICKER
 from loader import bot
 
 
-async def check_birthday():
+async def check_birthday() -> None:
     """ Проверят дату рожджения с текущей датой
     """
     now = datetime.datetime.today().date()

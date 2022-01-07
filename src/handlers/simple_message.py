@@ -63,10 +63,10 @@ async def get_pyjs(message: types.Message):
 
 
 @dp.message_handler(text=["Максим", "максим", "Макс", "макс"])
-async def hello(message: types.Message):
+async def hello_maxim(message: types.Message):
     sticker = "CAACAgIAAxkBAAEDoflh2CqUHby5Nfyui9G7kaP" \
               "E4AxfrwACHAIAAqzRchNIr_rSmKNEVyME"
     await bot.send_message(
-        message.chat.id, text="@kozenkodev ХУЙЛО, ГОВНОКОДЕР!!!"
+        message.chat.id, text="@kozenkodev СЕКСУАЛЬНЫЙ ГОВНОКОДЕР!!! СОСЕТ ХУЙ"
     )
     await bot.send_sticker(message.chat.id, sticker)
