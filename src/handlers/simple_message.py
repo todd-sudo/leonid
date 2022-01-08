@@ -7,7 +7,6 @@ from pycbrf import ExchangeRates
 
 from loader import dp, bot
 from ..services import (
-    get_pyjs_message,
     get_hello_message
 )
 
