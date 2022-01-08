@@ -7,18 +7,6 @@ def get_hello_message():
     return json_data.get("hello")
 
 
-def get_pyjs_message():
-    with open("src/data/strings.json", "r") as file:
-        json_data = json.load(file)
-    return json_data.get("pyjs")
-
-
-def get_dollar_message():
-    with open("src/data/strings.json", "r") as file:
-        json_data = json.load(file)
-    return json_data.get("dollar")
-
-
 def get_stickers_texts():
     return ["python", "js", "ios", "thanks", "windows"]
 
