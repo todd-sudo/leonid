@@ -23,6 +23,6 @@ async def check_birthday() -> None:
                     print(True)
                     await bot.send_message(
                         CHAT_ID,
-                        text=f"[ХУЙ] С днем рождения, {i.get(key)}!!!🎂 [ХУЙ]"
+                        text=f"{i.get(key)}, С днем рождения !!!"
                     )
                     await bot.send_sticker(CHAT_ID, BD_STICKER)
