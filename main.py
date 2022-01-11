@@ -11,8 +11,7 @@ from src.handlers.birthday import check_birthday
 
 
 async def scheduler():
-    # aioschedule.every(1).days.at(TIME).do(check_birthday)
-    aioschedule.every(5).seconds.do(check_birthday)
+    aioschedule.every(1).days.at(TIME).do(check_birthday)
     while True:
         await aioschedule.run_pending()
 #        await asyncio.sleep(1)

@@ -14,11 +14,11 @@ async def check_birthday() -> None:
         for i in list_users:
             list_date = list(i.keys())
             for key in list_date:
-                _now = str(now).split("-")
-                print(_now)
-                _now = now[1] + now[2]
-                _key = key.split("-")
-                _key = key[1] + key[2]
+                _now = str(now).split("-", 1)[1]
+                # _now = _now[1] + _now[2]
+                _key = key.split("-", 1)[1]
+                # _key = key[1] + key[2]
+                print(_now, _key)
                 if _key == _now:
                     print(True)
                     await bot.send_message(
