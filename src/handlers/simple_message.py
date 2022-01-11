@@ -34,11 +34,3 @@ async def get_dollar(message: types.Message):
     )
 
 
-@dp.message_handler(filters.Text(contains="аксим", ignore_case=True))
-async def hello_maxim(message: types.Message):
-    sticker = "CAACAgIAAxkBAAEDoflh2CqUHby5Nfyui9G7kaP" \
-              "E4AxfrwACHAIAAqzRchNIr_rSmKNEVyME"
-    await bot.send_message(
-        message.chat.id, text="@kozenkodev ПИДОРСКИЙ ГОВНОКОДЕР!!! СОСЕТ ХУЙ"
-    )
-    await bot.send_sticker(message.chat.id, sticker)

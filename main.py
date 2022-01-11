@@ -8,13 +8,15 @@ from config import TIME
 from loader import dp, bot
 
 from src.handlers.birthday import check_birthday
+from src import handlers
 
 
 async def scheduler():
-    aioschedule.every(1).days.at(TIME).do(check_birthday)
+    for i in TIME:
+        aioschedule.every(1).hours.at(TIME).do(check_birthday)
     while True:
         await aioschedule.run_pending()
-#        await asyncio.sleep(1)
+        await asyncio.sleep(1)
 
 
 async def on_startup(_):
