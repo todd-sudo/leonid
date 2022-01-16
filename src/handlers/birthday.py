@@ -16,9 +16,7 @@ async def check_birthday() -> None:
             for key in list_date:
                 _now = str(now).split("-", 1)[1]
                 _key = key.split("-", 1)[1]
-                print(_now, _key)
                 if _key == _now:
-                    print(True)
                     await bot.send_message(
                         CHAT_ID,
                         text=f"{i.get(key)}, С днем рождения !!!"
