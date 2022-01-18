@@ -1,10 +1,8 @@
-import asyncio
 import datetime
 import random
-from contextlib import suppress
 
 from aiogram import types
-from aiogram.dispatcher import filters, FSMContext
+from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
 from pycbrf import ExchangeRates
 
@@ -34,6 +32,7 @@ async def delete_bot_message(call: CallbackQuery):
 
 
 @dp.message_handler(filters.Text(contains="ривет", ignore_case=True))
+@dp.message_handler(commands=['hello'])
 async def welcome_message(message: types.Message):
     rnd_message = random.choice(get_hello_message())
     await bot.send_message(
@@ -44,6 +43,7 @@ async def welcome_message(message: types.Message):
 
 
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
+@dp.message_handler(commands=['dollar'])
 async def get_dollar(message: types.Message):
     rates = ExchangeRates(
         str(datetime.datetime.now().date()), locale_en=True
@@ -54,15 +54,14 @@ async def get_dollar(message: types.Message):
     )
 
 
-@dp.message_handler(
-    filters.Text(contains=["еонид", "енчик"], ignore_case=True)
-)
+@dp.message_handler(filters.Text(contains=["еонид"], ignore_case=True))
+@dp.message_handler(commands=['leonid'])
 async def start_dialog(message: types.Message):
     await message.answer(f"Че надо? @{message.from_user.username}")
 
 
-@dp.message_handler(text=["акой язык лучше"])
-async def lang_vs_lang(message: types.Message, state: FSMContext):
+@dp.message_handler(filters.Text(contains=["акой язык лучше"], ignore_case=True))
+@dp.message_handler(commands=['lang'])
+async def lang_vs_lang(message: types.Message):
     lg = random.choice(lang)
     await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
-    await state.finish()
