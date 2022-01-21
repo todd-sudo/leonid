@@ -4,16 +4,13 @@ import logging
 import aioschedule
 from aiogram import executor
 
-from config import TIME
 from loader import dp, bot
-
 from src.handlers.birthday import check_birthday
 from src import handlers
 
 
 async def scheduler():
-    for time in TIME:
-        aioschedule.every(1).hours.at(time).do(check_birthday)
+    aioschedule.every(1).hours.at("18:00").do(check_birthday)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
