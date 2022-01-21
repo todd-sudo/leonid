@@ -5,6 +5,7 @@ import aioschedule
 from aiogram import executor
 
 from loader import dp, bot
+
 from src.handlers.birthday import check_birthday
 from src import handlers
 
