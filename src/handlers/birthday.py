@@ -22,3 +22,6 @@ async def check_birthday() -> None:
                         text=f"{i.get(key)}, С днем рождения !!!"
                     )
                     await bot.send_sticker(CHAT_ID, BD_STICKER)
+                    break
+            break
+
