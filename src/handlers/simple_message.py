@@ -36,7 +36,6 @@ async def delete_bot_message(call: CallbackQuery):
 @dp.message_handler(commands=['hello'])
 async def welcome_message(message: types.Message):
     rnd_message = random.choice(get_hello_message())
-    print(message.chat.id)
     await bot.send_message(
         chat_id=CHAT_ID,
         text=f"{rnd_message} @{message.from_user.username}",
