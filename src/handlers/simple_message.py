@@ -1,10 +1,12 @@
 import datetime
 import random
 
+import requests
 from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
 from pycbrf import ExchangeRates
+from bs4 import BeautifulSoup
 
 from config import CHAT_ID
 from loader import dp, bot
@@ -45,11 +47,13 @@ async def welcome_message(message: types.Message):
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
 @dp.message_handler(commands=['dollar'])
 async def get_dollar(message: types.Message):
-    rates = ExchangeRates(
-        str(datetime.datetime.now().date()), locale_en=True
-    )
-    current_usd = f'{rates["USD"].name} - {rates["USD"].value} руб.'
-    await message.answer(text=current_usd)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0) Gecko/20100101 Firefox/97.0"
+    }
+    r = requests.get("https://ru.investing.com/currencies/usd-rub", headers=headers)
+    soup = BeautifulSoup(r.text, "lxml")
+    data = soup.find("span", class_="text-2xl").text.strip()
+    await message.answer(data)
 
 
 @dp.message_handler(filters.Text(contains=["еонид"], ignore_case=True))
