@@ -1,6 +1,7 @@
 import datetime
 import time
 import random
+import asyncio
 
 import requests
 from aiogram import types
@@ -72,10 +73,10 @@ async def lang_vs_lang(message: types.Message):
 
 @dp.message_handler()
 async def delete_fuf(message: types.Message):
-    users = [1317002386, 1162668212]
+    # users = [1317002386, 1162668212]
 
     msg = message
-    if msg.from_user.id in users:
-        time.sleep(5)
+    if msg.from_user.id == 1317002386 or msg.from_user.id == 1162668212:
+        await asyncio.sleep(3)
         await bot.delete_message(message.chat.id, msg.message_id)
 
