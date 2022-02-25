@@ -1,4 +1,5 @@
 import datetime
+import time
 import random
 
 import requests
@@ -67,3 +68,14 @@ async def start_dialog(message: types.Message):
 async def lang_vs_lang(message: types.Message):
     lg = random.choice(lang)
     await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
+
+
+@dp.message_handler()
+async def delete_fuf(message: types.Message):
+    users = [1317002386, 1162668212]
+
+    msg = message
+    if msg.from_user.id in users:
+        time.sleep(5)
+        await bot.delete_message(message.chat.id, msg.message_id)
+
