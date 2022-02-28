@@ -71,12 +71,12 @@ async def lang_vs_lang(message: types.Message):
     await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
 
 
-@dp.message_handler()
-async def delete_fuf(message: types.Message):
-    # users = [1317002386, 1162668212]
+# @dp.message_handler()
+# async def delete_fuf(message: types.Message):
+#     # users = [1317002386, 1162668212]
 
-    msg = message
-    if msg.from_user.id == 1317002386 or msg.from_user.id == 1162668212:
-        await asyncio.sleep(3)
-        await bot.delete_message(message.chat.id, msg.message_id)
+#     msg = message
+#     if msg.from_user.id == 939392408 or msg.from_user.id == 1162668212:
+#         await asyncio.sleep(3)
+#         await bot.delete_message(message.chat.id, msg.message_id)
 
