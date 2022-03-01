@@ -12,9 +12,10 @@ from bs4 import BeautifulSoup
 
 from config import CHAT_ID
 from loader import dp, bot
+from src.filters import IsAdmin
 from .keyboards import delete_message_keyboard
 from ..services import (
-    get_hello_message
+    get_hello_message,
 )
 
 
@@ -71,12 +72,20 @@ async def lang_vs_lang(message: types.Message):
     await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
 
 
-# @dp.message_handler()
-# async def delete_fuf(message: types.Message):
-#     # users = [1317002386, 1162668212]
+@dp.message_handler(filters.Text(contains=["хуй", "Хуй", "ХУЙ", "нихуя"], ignore_case=True))
+async def penis(message: types.Message):
+    msg = random.choice([
+        "сам хуй!",
+        "не матрись падла!",
+        "я за тобой слежу)",
+        "щас как уе*ууу тебя!",
+        "чик чик!!!",
+        "щас до играешся!!!",
+    ])
+    await message.answer(f"@{message.from_user.username} {msg}")
 
-#     msg = message
-#     if msg.from_user.id == 939392408 or msg.from_user.id == 1162668212:
-#         await asyncio.sleep(3)
-#         await bot.delete_message(message.chat.id, msg.message_id)
+
+@dp.message_handler(IsAdmin())
+async def admin_message(message: types.Message):
+    await bot.send_message(CHAT_ID, message.text)
 
