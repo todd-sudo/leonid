@@ -72,7 +72,7 @@ async def lang_vs_lang(message: types.Message):
     await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
 
 
-@dp.message_handler(filters.Text(contains=["хуй", "Хуй", "ХУЙ", "нихуя"], ignore_case=True))
+@dp.message_handler(filters.Text(contains=["хуй"], ignore_case=True))
 async def penis(message: types.Message):
     msg = random.choice([
         "сам хуй!",
@@ -87,5 +87,6 @@ async def penis(message: types.Message):
 
 @dp.message_handler(IsAdmin())
 async def admin_message(message: types.Message):
-    await bot.send_message(CHAT_ID, message.text)
+    if message.chat.id == 939392408:
+        await bot.send_message(CHAT_ID, message.text)
 
