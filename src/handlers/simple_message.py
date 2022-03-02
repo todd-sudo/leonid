@@ -93,3 +93,7 @@ async def admin_message(message: types.Message):
     if message.chat.id == 939392408:
         await bot.send_message(CHAT_ID, message.text)
 
+
+async def how_to_day():
+    await bot.send_message(CHAT_ID, "Как дела?")
+
