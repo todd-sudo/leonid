@@ -74,15 +74,18 @@ async def lang_vs_lang(message: types.Message):
 
 @dp.message_handler(filters.Text(contains=["хуй"], ignore_case=True))
 async def penis(message: types.Message):
-    msg = random.choice([
-        "сам хуй!",
-        "не матрись падла!",
-        "я за тобой слежу)",
-        "щас как уе*ууу тебя!",
-        "чик чик!!!",
-        "щас до играешся!!!",
-    ])
-    await message.answer(f"@{message.from_user.username} {msg}")
+    if message.from_user.id == 559367670:
+        await message.reply("Дай деняг!)")
+    else:
+        msg = random.choice([
+            "сам хуй!",
+            "не матерись падла!",
+            "я за тобой слежу)",
+            "щас как уе*ууу тебя!",
+            "чик чик!!!",
+            "щас до играешся!!!",
+        ])
+        await message.answer(f"@{message.from_user.username} {msg}")
 
 
 @dp.message_handler(IsAdmin())
