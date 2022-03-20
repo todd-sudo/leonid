@@ -46,15 +46,15 @@ async def delete_bot_message(call: CallbackQuery):
 @dp.message_handler(IsAdmin(), commands=['about'])
 async def welcome_message(message: types.Message):
     await message.answer("""
-    Мои команды: 
-    1. доллар | /dollar - показывать курс доллар в рублях
-    2. яп | /lang - рандомно показывать лучший ЯП
-    3. /site_ip:google.com - показывать IP адрес сайта(после двоеточия)
-    4. /qr:https:google.com - заворачивать ссылки в QR код(обязательно наличие http's)
-    5. imgrus, imgen, imgua + ФОТО С ТЕКСТОМ - считывать текст с фотографии:
-        imgrus - русский
-        imgen - английский
-        imgua - украинский
+Мои команды: 
+1. доллар | /dollar - показывать курс доллар в рублях
+2. яп | /lang - рандомно показывать лучший ЯП
+3. /site_ip:google.com - показывать IP адрес сайта(после двоеточия)
+4. /qr:https://google.com - заворачивать ссылки в QR код(обязательно наличие http's)
+5. imgrus, imgen, imgua + ФОТО С ТЕКСТОМ - считывать текст с фотографии:
+    imgrus - русский
+    imgen - английский
+    imgua - украинский
     """)
 
 
