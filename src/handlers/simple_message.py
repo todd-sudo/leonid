@@ -1,19 +1,19 @@
+import os.path
 import random
 import socket
+import uuid
 
 import requests
+import qrcode
 from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
 from bs4 import BeautifulSoup
 
-from config import CHAT_ID
 from loader import dp, bot
 from .keyboards import delete_message_keyboard
-from ..services import (
-    get_hello_message,
-)
-
+from .tesseract import image_to_text
+from ..filters import IsAdmin
 
 lang = [
     "Java",
@@ -28,6 +28,14 @@ lang = [
     "Basic"
 ]
 
+hello = [
+    "Привет",
+    "Дарова",
+    "Здарова",
+    "Добро пожаловать падла",
+    "Че надо?"
+]
+
 
 @dp.callback_query_handler(text="delete_msg")
 async def delete_bot_message(call: CallbackQuery):
@@ -35,10 +43,25 @@ async def delete_bot_message(call: CallbackQuery):
     await bot.delete_message(call.message.chat.id, msg)
 
 
+@dp.message_handler(IsAdmin(), commands=['about'])
+async def welcome_message(message: types.Message):
+    await message.answer("""
+    Мои команды: 
+    1. доллар | /dollar - показывать курс доллар в рублях
+    2. яп | /lang - рандомно показывать лучший ЯП
+    3. /site_ip:google.com - показывать IP адрес сайта(после двоеточия)
+    4. /qr:https:google.com - заворачивать ссылки в QR код(обязательно наличие http's)
+    5. imgrus, imgen, imgua + ФОТО С ТЕКСТОМ - считывать текст с фотографии:
+        imgrus - русский
+        imgen - английский
+        imgua - украинский
+    """)
+
+
 @dp.message_handler(filters.Text(contains="ривет", ignore_case=True))
 @dp.message_handler(commands=['hello'])
 async def welcome_message(message: types.Message):
-    rnd_message = random.choice(get_hello_message())
+    rnd_message = random.choice(hello)
     await message.answer(
         text=f"{rnd_message} @{message.from_user.username}",
         reply_markup=delete_message_keyboard
@@ -57,26 +80,11 @@ async def get_dollar(message: types.Message):
     await message.answer(data)
 
 
-@dp.message_handler(filters.Text(contains=["еонид"], ignore_case=True))
-@dp.message_handler(commands=['leonid'])
-async def start_dialog(message: types.Message):
-    await message.answer(f"Че надо? @{message.from_user.username}")
-
-
 @dp.message_handler(commands=['lang'])
 @dp.message_handler(filters.Text(contains=["яп"], ignore_case=True))
 async def lang_vs_lang(message: types.Message):
     lg = random.choice(lang)
     await message.answer(f"На мой взгляд, лучшим языком является {lg}")
-
-
-async def how_to_day():
-    await bot.send_message(CHAT_ID, "Как дела?")
-
-
-@dp.message_handler(filters.Text(contains=["бравис"], ignore_case=True))
-async def bravis_hello(message: types.Message):
-    await message.answer("bravis one love")
 
 
 @dp.message_handler(filters.Text(contains=["/site_ip:"], ignore_case=True))
@@ -88,3 +96,63 @@ async def get_site_ip(message: types.Message):
             await message.answer(f"Host Name: {host}\nIP Address: {ip_address}")
     except Exception:
         await message.answer("Invalid hostname...")
+
+
+@dp.message_handler(filters.Text(contains=["/qr:"], ignore_case=True))
+async def generate_qrcode(message: types.Message):
+    path = "src/data/qrcodes"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    link = message.text.split(":")[1]
+    if "http" in link:
+        qr = qrcode.make(link)
+        image_name = f"{uuid.uuid4()}.png"
+        qr.save(stream=f"{path}/{image_name}")
+
+        with open(f"{path}/{image_name}", "rb") as file:
+            await bot.send_photo(message.chat.id, file)
+    else:
+        await message.answer("Invalid Link...")
+
+
+@dp.message_handler(
+    filters.Text(contains=["imgrus"], ignore_case=True),
+    content_types=['photo']
+)
+async def tesseract_image_to_text_rus(message: types.Message):
+    file_name = uuid.uuid4()
+    path = "src/data/user_image"
+    await message.photo[-1].download(
+        destination_file=f"{path}/{file_name}.png"
+    )
+    text = image_to_text(f"{path}/{file_name}.png", "rus")
+    await message.answer(text)
+
+
+@dp.message_handler(
+    filters.Text(contains=["imgen"], ignore_case=True),
+    content_types=['photo']
+)
+async def tesseract_image_to_text_en(message: types.Message):
+    file_name = uuid.uuid4()
+    path = "src/data/user_image"
+    await message.photo[-1].download(
+        destination_file=f"{path}/{file_name}.png"
+    )
+    text = image_to_text(f"{path}/{file_name}.png", "eng")
+    await message.answer(text)
+
+
+@dp.message_handler(
+    filters.Text(contains=["imgua"], ignore_case=True),
+    content_types=['photo']
+)
+async def tesseract_image_to_text_ukr(message: types.Message):
+    file_name = uuid.uuid4()
+    path = "src/data/user_image"
+    await message.photo[-1].download(
+        destination_file=f"{path}/{file_name}.png"
+    )
+    text = image_to_text(f"{path}/{file_name}.png", "ukr")
+    await message.answer(text)
+
