@@ -22,12 +22,14 @@ from ..services import (
 lang = [
     "Java",
     "С",
-    "Python",
     "C++",
     "Go",
     "C#",
     "JavaScript",
     "РНР",
+    "Pascal",
+    "Ruby",
+    "Basic"
 ]
 
 
@@ -65,35 +67,16 @@ async def start_dialog(message: types.Message):
     await message.answer(f"Че надо? @{message.from_user.username}")
 
 
-@dp.message_handler(filters.Text(contains=["акой язык лучше"], ignore_case=True))
 @dp.message_handler(commands=['lang'])
+@dp.message_handler(filters.Text(contains=["яп"], ignore_case=True))
 async def lang_vs_lang(message: types.Message):
     lg = random.choice(lang)
-    await message.answer(f"На мой взгляд, лучшим языком является: {lg}")
-
-
-@dp.message_handler(filters.Text(contains=["хуй"], ignore_case=True))
-async def penis(message: types.Message):
-    if message.from_user.id == 559367670:
-        await message.reply("Дай деняг!)")
-    else:
-        msg = random.choice([
-            "сам хуй!",
-            "не матерись падла!",
-            "я за тобой слежу)",
-            "щас как уе*ууу тебя!",
-            "чик чик!!!",
-            "щас до играешся!!!",
-        ])
-        await message.answer(f"@{message.from_user.username} {msg}")
-
-
-@dp.message_handler(IsAdmin())
-async def admin_message(message: types.Message):
-    if message.chat.id == 939392408:
-        await bot.send_message(CHAT_ID, message.text)
+    await message.answer(f"На мой взгляд, лучшим языком является {lg}")
 
 
 async def how_to_day():
     await bot.send_message(CHAT_ID, "Как дела?")
 
+@dp.message_handler(filters.Text(contains=["бравис"], ignore_case=True))
+async def bravis(message: types.Message):
+    await message.answer("bravis one love")
