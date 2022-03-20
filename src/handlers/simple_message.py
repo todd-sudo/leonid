@@ -1,18 +1,14 @@
-import datetime
-import time
 import random
-import asyncio
+import socket
 
 import requests
 from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
-from pycbrf import ExchangeRates
 from bs4 import BeautifulSoup
 
 from config import CHAT_ID
 from loader import dp, bot
-from src.filters import IsAdmin
 from .keyboards import delete_message_keyboard
 from ..services import (
     get_hello_message,
@@ -77,6 +73,18 @@ async def lang_vs_lang(message: types.Message):
 async def how_to_day():
     await bot.send_message(CHAT_ID, "Как дела?")
 
+
 @dp.message_handler(filters.Text(contains=["бравис"], ignore_case=True))
-async def bravis(message: types.Message):
+async def bravis_hello(message: types.Message):
     await message.answer("bravis one love")
+
+
+@dp.message_handler(filters.Text(contains=["/site_ip:"], ignore_case=True))
+async def get_site_ip(message: types.Message):
+    host = message.text.split(":")[1]
+    try:
+        ip_address = socket.gethostbyname(host)
+        if ip_address is not None:
+            await message.answer(f"Host Name: {host}\nIP Address: {ip_address}")
+    except Exception:
+        await message.answer("Invalid hostname...")
