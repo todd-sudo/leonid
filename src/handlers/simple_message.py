@@ -14,7 +14,7 @@ from bs4 import BeautifulSoup
 from config import GPU
 from loader import dp, bot
 from .keyboards import delete_message_keyboard
-from .recognition import image_to_text_tess, text_recognition
+from .recognition import text_recognition
 from ..filters import IsAdmin
 
 lang = [
