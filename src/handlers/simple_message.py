@@ -1,3 +1,4 @@
+import asyncio
 import os.path
 import random
 import socket
@@ -124,7 +125,14 @@ async def text_recognition_handler(message: types.Message):
         destination_file=f"{path}/{file_name}.png"
     )
     msg_bot = await message.answer("Обрабатываю изображение...")
-    data = text_recognition(f"{path}/{file_name}.png", True)
+    try:
+        data = text_recognition(f"{path}/{file_name}.png", True)
+    except Exception as e:
+        print(e)
+        err = await message.answer("Произошла ошибка при распознавании текста...")
+        await bot.delete_message(message.chat.id, msg_bot.message_id)
+        await asyncio.sleep(5)
+        await bot.delete_message(message.chat.id, err.message_id)
     text = "\n".join(data)
     await message.answer(text)
     await bot.delete_message(message.chat.id, msg_bot.message_id)
