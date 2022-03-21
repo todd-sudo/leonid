@@ -11,6 +11,7 @@ from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
 from bs4 import BeautifulSoup
 
+from config import GPU
 from loader import dp, bot
 from .keyboards import delete_message_keyboard
 from .recognition import image_to_text_tess, text_recognition
@@ -126,7 +127,7 @@ async def text_recognition_handler(message: types.Message):
     )
     msg_bot = await message.answer("Обрабатываю изображение...")
     try:
-        data = text_recognition(f"{path}/{file_name}.png", True)
+        data = text_recognition(f"{path}/{file_name}.png", GPU)
     except Exception as e:
         print(e)
         err = await message.answer("Произошла ошибка при распознавании текста...")
