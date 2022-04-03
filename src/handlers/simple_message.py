@@ -40,7 +40,10 @@ hello = [
 @dp.callback_query_handler(text="delete_msg")
 async def delete_bot_message(call: CallbackQuery):
     msg = call.message.message_id
-    await bot.delete_message(call.message.chat.id, msg)
+    if call.from_user.id == 939392408:
+        await bot.delete_message(call.message.chat.id, msg)
+    else:
+        await call.answer("Хуй тебе)")
 
 
 @dp.message_handler(IsAdmin(), commands=['about'])
