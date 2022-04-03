@@ -3,6 +3,7 @@ import os.path
 import random
 import socket
 import uuid
+import time
 
 import requests
 import qrcode
@@ -69,6 +70,14 @@ async def welcome_message(message: types.Message):
         text=f"{rnd_message} @{message.from_user.username}",
         reply_markup=delete_message_keyboard
     )
+
+
+@dp.message_handler(filters.Text(contains="жги", ignore_case=True))
+async def timofey(message: types.Message):
+    if message.from_user.id == 939392408:
+        for _ in range(6):
+            await message.answer("@Deacon_26 ХУЕСОС")
+
 
 
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
