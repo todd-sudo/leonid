@@ -1,4 +1,5 @@
 import asyncio
+from email.message import Message
 import os.path
 import random
 import socket
@@ -37,14 +38,39 @@ hello = [
     "Силям Алейкум"
 ]
 
+leonid_text = [
+    "Да-да..",
+    "Чего тебе?",
+    "Отвали...",
+    "Ну что опять?",
+    "Шо такое?",
+    "Не трогай меня",
+    "Что такое?",
+    "Я тут",
+]
+
+
+async def how_do_you_do():
+    for ch_id in [-1001261470613, -1001383004405, -688082212]:
+        await bot.send_message(ch_id, f"Как дела?")
+
 
 @dp.callback_query_handler(text="delete_msg")
 async def delete_bot_message(call: CallbackQuery):
     msg = call.message.message_id
-    if call.from_user.id == 939392408:
-        await bot.delete_message(call.message.chat.id, msg)
-    else:
-        await call.answer("Хуй тебе)")
+    await bot.delete_message(call.message.chat.id, msg)
+    msg = await call.message.answer(f"@{call.from_user.username} ты че обалдел?")
+    await asyncio.sleep(5)
+    await bot.delete_message(call.message.chat.id, msg.message_id)
+
+
+@dp.message_handler(filters.Text(contains=["леонид"], ignore_case=True))
+async def leonid(message: types.Message):
+    rnd_message = random.choice(leonid_text)
+    await message.answer(
+        text=f"{rnd_message} @{message.from_user.username}",
+        reply_markup=delete_message_keyboard
+    )
 
 
 @dp.message_handler(IsAdmin(), commands=['about'])
