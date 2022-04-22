@@ -50,9 +50,9 @@ leonid_text = [
 ]
 
 
-async def how_do_you_do():
-    for ch_id in [-1001261470613, -1001383004405, -688082212]:
-        await bot.send_message(ch_id, f"Как дела?")
+# async def how_do_you_do():
+#     for ch_id in [-1001261470613, -1001383004405, -688082212]:
+#         await bot.send_message(ch_id, f"Как дела?")
 
 
 @dp.callback_query_handler(text="delete_msg")
@@ -96,14 +96,6 @@ async def welcome_message(message: types.Message):
         text=f"{rnd_message} @{message.from_user.username}",
         reply_markup=delete_message_keyboard
     )
-
-
-@dp.message_handler(filters.Text(contains="жги", ignore_case=True))
-async def timofey(message: types.Message):
-    if message.from_user.id == 939392408:
-        for _ in range(6):
-            await message.answer("@Deacon_26 ХУЕСОС")
-
 
 
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))

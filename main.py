@@ -8,12 +8,12 @@ from loader import dp, bot
 
 from src.handlers.birthday import check_birthday
 from src import handlers
-from src.handlers.simple_message import how_do_you_do
+# from src.handlers.simple_message import how_do_you_do
 
 
 async def scheduler():
     aioschedule.every(1).hours.do(check_birthday)
-    aioschedule.every(2).hours.do(how_do_you_do)
+    # aioschedule.every(2).hours.do(how_do_you_do)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)
