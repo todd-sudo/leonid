@@ -16,7 +16,6 @@ from bs4 import BeautifulSoup
 from config import GPU
 from loader import dp, bot
 from .keyboards import delete_message_keyboard
-from .recognition import text_recognition
 from ..filters import IsAdmin
 
 lang = [
@@ -145,67 +144,3 @@ async def generate_qrcode(message: types.Message):
         await bot.send_photo(message.chat.id, file)
     os.remove(f"{path}/{image_name}")
 
-
-@dp.message_handler(
-    filters.Text(contains=["/text"], ignore_case=True), content_types=['photo']
-)
-async def text_recognition_handler(message: types.Message):
-    file_name = uuid.uuid4()
-    path = "src/data/user_image"
-    await message.photo[-1].download(
-        destination_file=f"{path}/{file_name}.png"
-    )
-    msg_bot = await message.answer("Обрабатываю изображение...")
-    try:
-        data = text_recognition(f"{path}/{file_name}.png", GPU)
-    except Exception as e:
-        print(e)
-        err = await message.answer("Произошла ошибка при распознавании текста...")
-        await bot.delete_message(message.chat.id, msg_bot.message_id)
-        await asyncio.sleep(5)
-        await bot.delete_message(message.chat.id, err.message_id)
-    text = "\n".join(data)
-    await message.answer(text)
-    await bot.delete_message(message.chat.id, msg_bot.message_id)
-    os.remove(f"{path}/{file_name}.png")
-
-# @dp.message_handler(
-#     filters.Text(contains=["imgrus"], ignore_case=True),
-#     content_types=['photo']
-# )
-# async def tesseract_image_to_text_rus(message: types.Message):
-#     file_name = uuid.uuid4()
-#     path = "src/data/user_image"
-#     await message.photo[-1].download(
-#         destination_file=f"{path}/{file_name}.png"
-#     )
-#     text = image_to_text(f"{path}/{file_name}.png", "rus")
-#     await message.answer(text)
-#
-#
-# @dp.message_handler(
-#     filters.Text(contains=["imgen"], ignore_case=True),
-#     content_types=['photo']
-# )
-# async def tesseract_image_to_text_en(message: types.Message):
-#     file_name = uuid.uuid4()
-#     path = "src/data/user_image"
-#     await message.photo[-1].download(
-#         destination_file=f"{path}/{file_name}.png"
-#     )
-#     text = image_to_text(f"{path}/{file_name}.png", "eng")
-#     await message.answer(text)
-#
-#
-# @dp.message_handler(
-#     filters.Text(contains=["imgua"], ignore_case=True),
-#     content_types=['photo']
-# )
-# async def tesseract_image_to_text_ukr(message: types.Message):
-#     file_name = uuid.uuid4()
-#     path = "src/data/user_image"
-#     await message.photo[-1].download(
-#         destination_file=f"{path}/{file_name}.png"
-#     )
-#     text = image_to_text(f"{path}/{file_name}.png", "ukr")
-#     await message.answer(text)
