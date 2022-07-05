@@ -76,8 +76,20 @@ async def leonid(message: types.Message):
     )
 
 
-@dp.message_handler(text=["аня", "анюта", "анька", "анечка", "анна", "Аня", "Анюта", "Анька", "Анечка", "Анна"])
+@dp.message_handler(filters.Text(contains=["аня"], ignore_case=True))
 async def anya(message: types.Message):
+    msg = random.choice(anya_list)
+    await message.answer(text=msg)
+
+
+@dp.message_handler(filters.Text(contains=["анька"], ignore_case=True))
+async def anya2(message: types.Message):
+    msg = random.choice(anya_list)
+    await message.answer(text=msg)
+
+
+@dp.message_handler(filters.Text(contains=["анюта"], ignore_case=True))
+async def anya3(message: types.Message):
     msg = random.choice(anya_list)
     await message.answer(text=msg)
 
