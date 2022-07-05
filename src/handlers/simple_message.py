@@ -1,10 +1,7 @@
 import asyncio
-from email.message import Message
 import os.path
 import random
-import socket
 import uuid
-import time
 
 import requests
 import qrcode
@@ -12,11 +9,10 @@ from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
 from bs4 import BeautifulSoup
-
-from config import GPU
 from loader import dp, bot
+import config
 from .keyboards import delete_message_keyboard
-from ..filters import IsAdmin
+
 
 lang = [
     "Java",
@@ -46,12 +42,18 @@ leonid_text = [
     "Не трогай меня",
     "Что такое?",
     "Я тут",
+    "Давай ебаца",
+    "Раздевайся дорогуша)"
 ]
 
-
-# async def how_do_you_do():
-#     for ch_id in [-1001261470613, -1001383004405, -688082212]:
-#         await bot.send_message(ch_id, f"Как дела?")
+anya_list = [
+    "Анюта самая пиздатая",
+    "Люблю Аньку)",
+    "Анька моя бля!",
+    "Кофе с любовью)",
+    "Устроим покур!",
+    "Аня счастье всей моей жизни!",
+]
 
 
 @dp.callback_query_handler(text="delete_msg")
@@ -68,23 +70,30 @@ async def leonid(message: types.Message):
     rnd_message = random.choice(leonid_text)
     await message.answer(
         text=f"{rnd_message} @{message.from_user.username}",
-        reply_markup=delete_message_keyboard
+        # reply_markup=delete_message_keyboard
     )
 
 
-@dp.message_handler(IsAdmin(), commands=['about'])
-async def welcome_message(message: types.Message):
-    await message.answer("""
-Мои команды: 
-1. доллар | /dollar - показывать курс доллар в рублях
-2. яп | /lang - рандомно показывать лучший ЯП
-3. /site_ip:google.com - показывать IP адрес сайта(после двоеточия)
-4. /qr:https://google.com - заворачивать ссылки в QR код(обязательно наличие http's)
-5. imgrus, imgen, imgua + ФОТО С ТЕКСТОМ - считывать текст с фотографии:
-    imgrus - русский
-    imgen - английский
-    imgua - украинский
-    """)
+@dp.message_handler(text=["аня", "анюта", "анька", "анечка", "анна", "Аня", "Анюта", "Анька", "Анечка", "Анна"])
+async def anya(message: types.Message):
+    msg = random.choice(anya_list)
+    await message.answer(text=msg)
+
+
+async def anekdot():
+    url = "https://www.anekdot.ru/"
+    res = requests.get(url)
+    if res.status_code != 200:
+        print("error")
+    data = res.text
+    if not data:
+        print("error")
+    soup = BeautifulSoup(data, "lxml")
+    divs = soup.find_all("div", class_="text")
+    rnd_message = random.choice(divs)
+    text = rnd_message.text.strip()
+    for chid in config.CHAT_IDS:
+        await bot.send_message(chat_id=int(chid), text=text, reply_markup=delete_message_keyboard)
 
 
 @dp.message_handler(filters.Text(contains="ривет", ignore_case=True))
@@ -93,12 +102,11 @@ async def welcome_message(message: types.Message):
     rnd_message = random.choice(hello)
     await message.answer(
         text=f"{rnd_message} @{message.from_user.username}",
-        reply_markup=delete_message_keyboard
+        # reply_markup=delete_message_keyboard
     )
 
 
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
-@dp.message_handler(commands=['dollar'])
 async def get_dollar(message: types.Message):
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0) Gecko/20100101 Firefox/97.0"
@@ -108,25 +116,6 @@ async def get_dollar(message: types.Message):
     soup = BeautifulSoup(r.text, "lxml")
     data = soup.find("span", class_="text-2xl").text.strip()
     await message.answer(data)
-
-
-@dp.message_handler(commands=['lang'])
-@dp.message_handler(filters.Text(contains=["яп"], ignore_case=True))
-async def lang_vs_lang(message: types.Message):
-    lg = random.choice(lang)
-    await message.answer(f"На мой взгляд, лучшим языком является {lg}")
-
-
-@dp.message_handler(filters.Text(contains=["/site_ip:"], ignore_case=True))
-async def get_site_ip(message: types.Message):
-    host = message.text.split(":")[1]
-    try:
-        ip_address = socket.gethostbyname(host)
-        if ip_address is not None:
-            await message.answer(
-                f"Host Name: {host}\nIP Address: {ip_address}")
-    except Exception:
-        await message.answer("Invalid hostname...")
 
 
 @dp.message_handler(filters.Text(contains=["/qr:"], ignore_case=True))
