@@ -12,7 +12,7 @@ from bs4 import BeautifulSoup
 from loader import dp, bot
 import config
 from .keyboards import delete_message_keyboard
-
+from ..filters import IsAdmin
 
 lang = [
     "Java",
@@ -74,6 +74,13 @@ async def leonid(message: types.Message):
         text=f"{rnd_message} @{message.from_user.username}",
         # reply_markup=delete_message_keyboard
     )
+
+
+@dp.message_handler(IsAdmin())
+async def admin(message: types.Message):
+    chid = -736694296
+    if message.chat.id == 939392408:
+        await bot.send_message(chid, message.text)
 
 
 @dp.message_handler(filters.Text(contains=["аня"], ignore_case=True))
