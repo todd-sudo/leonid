@@ -10,6 +10,5 @@ BOT_TOKEN = os.getenv("TOKEN")
 CHAT_ID = int(os.getenv("CHAT_ID"))
 CHAT_IDS = os.getenv("CHAT_IDS").split(";")
 BD_STICKER = "CAACAgIAAxkBAAEDofVh2CcZLyxcEDPTk2jxtzmId7OHPQACGwADwDZPE329ioPLRE1qIwQ"
-ADMINS = ["939392408"]
-# Использовать GPU для распознавания текста
-GPU = True
+ADMINS = ["939392408", -672385422]
+

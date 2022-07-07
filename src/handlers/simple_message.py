@@ -1,10 +1,8 @@
-import asyncio
+import json
 import os.path
 import random
-import uuid
 
 import requests
-import qrcode
 from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
@@ -12,75 +10,78 @@ from bs4 import BeautifulSoup
 from loader import dp, bot
 import config
 from .keyboards import delete_message_keyboard
+from .text import leonid_text, hello, anya_list
 from ..filters import IsAdmin
 
-lang = [
-    "Java",
-    "С",
-    "Go",
-    "C#",
-    "JavaScript",
-    "РНР",
-    "Ruby",
-]
 
-hello = [
-    "Привет",
-    "Дарова",
-    "Здарова",
-    "Че надо?",
-    "Приветули",
-    "Силям Алейкум"
-]
+ADMIN_MESSAGE = "Не не не)) Включен админ режим!"
 
-leonid_text = [
-    "Да-да..",
-    "Чего тебе?",
-    "Отвали...",
-    "Ну что опять?",
-    "Шо такое?",
-    "Не трогай меня",
-    "Что такое?",
-    "Я тут",
-    "Давай ебаца",
-    "Раздевайся дорогуша)"
-]
 
-anya_list = [
-    "Анюта самая пиздатая",
-    "Люблю Аньку)",
-    "Анька моя бля!",
-    "Кофе с любовью)",
-    "Устроим покур!",
-    "Аня счастье всей моей жизни!",
-    "Солнце мое!",
-    "Кисуля))))))))))))))"
-]
+def create_first_state():
+    path = "src/data/state/"
+    with open(path + "state.json", "w") as f:
+        json.dump({"state": False}, f, indent=4, ensure_ascii=False)
+
+
+def get_state() -> bool:
+    path = "src/data/state/"
+    if not os.path.exists(path):
+        os.makedirs(path)
+    data = None
+    try:
+        with open(path + "state.json", "r") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        create_first_state()
+    if not data:
+        create_first_state()
+        with open(path + "state.json", "r") as f:
+            data = json.load(f)
+    state = data.get("state")
+    return state
+
+
+@dp.message_handler(filters.Text(contains=["врубай"], ignore_case=True))
+async def on_admin(message: types.Message):
+    if message.chat.id == config.ADMINS[1]:
+        path = "src/data/state/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path + "state.json", "w") as f:
+            json.dump({"state": True}, f, indent=4, ensure_ascii=False)
+
+        await message.answer("Ок бро! Включил админ режим!")
+
+
+@dp.message_handler(filters.Text(contains=["вырубай"], ignore_case=True))
+async def off_admin(message: types.Message):
+    if message.chat.id == config.ADMINS[1]:
+        path = "src/data/state/"
+        if not os.path.exists(path):
+            os.makedirs(path)
+        with open(path + "state.json", "w") as f:
+            json.dump({"state": False}, f, indent=4, ensure_ascii=False)
+
+        await message.answer("Ок бро! Выключил админ режим!")
 
 
 @dp.callback_query_handler(text="delete_msg")
 async def delete_bot_message(call: CallbackQuery):
     msg = call.message.message_id
     await bot.delete_message(call.message.chat.id, msg)
-    msg = await call.message.answer(f"@{call.from_user.username} ты че обалдел?")
-    await asyncio.sleep(5)
-    await bot.delete_message(call.message.chat.id, msg.message_id)
 
 
 @dp.message_handler(filters.Text(contains=["леонид"], ignore_case=True))
 async def leonid(message: types.Message):
+    state = get_state()
+    print(state)
+    if state:
+        await message.answer(ADMIN_MESSAGE)
+        return
     rnd_message = random.choice(leonid_text)
     await message.answer(
-        text=f"{rnd_message} @{message.from_user.username}",
-        # reply_markup=delete_message_keyboard
+        text=f"{rnd_message}",
     )
-
-
-@dp.message_handler(IsAdmin())
-async def admin(message: types.Message):
-    chid = -736694296
-    if message.chat.id == 939392408:
-        await bot.send_message(chid, message.text)
 
 
 @dp.message_handler(filters.Text(contains=["аня"], ignore_case=True))
@@ -114,11 +115,13 @@ async def anekdot():
     rnd_message = random.choice(divs)
     text = rnd_message.text.strip()
     for chid in config.CHAT_IDS:
-        await bot.send_message(chat_id=int(chid), text=text, reply_markup=delete_message_keyboard)
+        await bot.send_message(
+            chat_id=int(chid), text=text, reply_markup=delete_message_keyboard
+        )
 
 
 @dp.message_handler(filters.Text(contains="ривет", ignore_case=True))
-@dp.message_handler(commands=['hello'])
+@dp.message_handler(commands=['start', 'hello'])
 async def welcome_message(message: types.Message):
     rnd_message = random.choice(hello)
     await message.answer(
@@ -130,27 +133,13 @@ async def welcome_message(message: types.Message):
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
 async def get_dollar(message: types.Message):
     headers = {
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0) Gecko/20100101 Firefox/97.0"
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0)"
+                      " Gecko/20100101 Firefox/97.0"
     }
-    r = requests.get("https://ru.investing.com/currencies/usd-rub",
-                     headers=headers)
+    r = requests.get(
+        "https://ru.investing.com/currencies/usd-rub",
+         headers=headers
+    )
     soup = BeautifulSoup(r.text, "lxml")
     data = soup.find("span", class_="text-2xl").text.strip()
     await message.answer(data)
-
-
-@dp.message_handler(filters.Text(contains=["/qr:"], ignore_case=True))
-async def generate_qrcode(message: types.Message):
-    path = "src/data/qrcodes"
-    if not os.path.exists(path):
-        os.makedirs(path)
-    string = message.text
-
-    qr = qrcode.make(string)
-    image_name = f"{uuid.uuid4()}.png"
-    qr.save(stream=f"{path}/{image_name}")
-
-    with open(f"{path}/{image_name}", "rb") as file:
-        await bot.send_photo(message.chat.id, file)
-    os.remove(f"{path}/{image_name}")
-
