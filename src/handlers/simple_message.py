@@ -43,7 +43,7 @@ def get_state() -> bool:
 
 @dp.message_handler(filters.Text(contains=["врубай"], ignore_case=True))
 async def on_admin(message: types.Message):
-    if message.chat.id == config.ADMINS[1]:
+    if message.from_user.id == config.ADMINS[2]:
         path = "src/data/state/"
         if not os.path.exists(path):
             os.makedirs(path)
@@ -55,7 +55,7 @@ async def on_admin(message: types.Message):
 
 @dp.message_handler(filters.Text(contains=["вырубай"], ignore_case=True))
 async def off_admin(message: types.Message):
-    if message.chat.id == config.ADMINS[1]:
+    if message.from_user.id == config.ADMINS[2]:
         path = "src/data/state/"
         if not os.path.exists(path):
             os.makedirs(path)
@@ -74,8 +74,7 @@ async def delete_bot_message(call: CallbackQuery):
 @dp.message_handler(filters.Text(contains=["леонид"], ignore_case=True))
 async def leonid(message: types.Message):
     state = get_state()
-    print(state)
-    if state:
+    if state and message.from_user.id != config.ADMINS[2]:
         await message.answer(ADMIN_MESSAGE)
         return
     rnd_message = random.choice(leonid_text)
@@ -86,18 +85,30 @@ async def leonid(message: types.Message):
 
 @dp.message_handler(filters.Text(contains=["аня"], ignore_case=True))
 async def anya(message: types.Message):
+    state = get_state()
+    if state and message.from_user.id != config.ADMINS[2]:
+        await message.answer(ADMIN_MESSAGE)
+        return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
 
 
 @dp.message_handler(filters.Text(contains=["анька"], ignore_case=True))
 async def anya2(message: types.Message):
+    state = get_state()
+    if state and message.from_user.id != config.ADMINS[2]:
+        await message.answer(ADMIN_MESSAGE)
+        return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
 
 
 @dp.message_handler(filters.Text(contains=["анюта"], ignore_case=True))
 async def anya3(message: types.Message):
+    state = get_state()
+    if state and message.from_user.id != config.ADMINS[2]:
+        await message.answer(ADMIN_MESSAGE)
+        return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
 
@@ -132,6 +143,10 @@ async def welcome_message(message: types.Message):
 
 @dp.message_handler(filters.Text(contains="оллар", ignore_case=True))
 async def get_dollar(message: types.Message):
+    state = get_state()
+    if state and message.from_user.id != config.ADMINS[2]:
+        await message.answer(ADMIN_MESSAGE)
+        return
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0)"
                       " Gecko/20100101 Firefox/97.0"
