@@ -8,7 +8,7 @@ from loader import dp, bot
 
 from src.handlers.birthday import check_birthday
 from src import handlers
-from src.handlers.simple_message import anekdot
+from src.handlers.message import anekdot
 
 
 async def scheduler():

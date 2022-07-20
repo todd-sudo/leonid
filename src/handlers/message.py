@@ -6,15 +6,70 @@ import requests
 from aiogram import types
 from aiogram.dispatcher import filters
 from aiogram.types import CallbackQuery
+from aiogram.types.inline_keyboard import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup
+)
 from bs4 import BeautifulSoup
 from loader import dp, bot
 import config
-from .keyboards import delete_message_keyboard
+from .keyboards import delete_message_keyboard, get_callback_data_p_name
 from .text import leonid_text, hello, anya_list
-from ..filters import IsAdmin
+from .utils import delete_all_files_in_folder_bird, save_data_username_in_file_bird, \
+    get_data_in_file_bird
+from ..bird.bird import find_username
 
 
-ADMIN_MESSAGE = "Не не не)) Включен админ режим!"
+cb = get_callback_data_p_name()
+
+
+@dp.callback_query_handler(cb.filter())
+async def get_info_on_username(call: types.CallbackQuery, callback_data: dict):
+    await call.answer("Информация загружается")
+    sites = get_data_in_file_bird()
+    if not sites:
+        await call.message.answer("Нет сохраненных данных!")
+    app_name = callback_data["p_name"]
+    for site in sites:
+        site_lower_name = site.get("app").lower()
+        if app_name == site_lower_name:
+            msg = f"Статус: {site.get('status')}\n" \
+                  f"Соц. сеть: {site.get('app')}\n" \
+                  f"Ссылка: {site.get('url')}\n"
+            await call.message.answer(msg)
+
+
+@dp.message_handler(filters.Text(contains="найди:", ignore_case=True))
+async def find_username_handler(message: types.Message):
+    delete_all_files_in_folder_bird()
+    u_message = message.text.strip().split(":")
+    if len(u_message) != 2:
+        await message.answer("Невалидный текст")
+        return
+    msg = await message.answer("Ищу...")
+    username = u_message[1].strip()
+    data = await find_username(username=username)
+    if not data:
+        await message.answer("Произошла ошибка")
+        return
+    sites = data.get("sites")
+    buttons = InlineKeyboardMarkup(row_width=6)
+    btns = []
+    save_data_username_in_file_bird(sites, username)
+    for s in sites:
+        print(s.get("app"))
+        if s.get("status") != "FOUND":
+            continue
+        btn = InlineKeyboardButton(
+            text=s.get("app"),
+            callback_data=cb.new(p_name=s.get("app").lower())
+        )
+        btns.append(btn)
+
+    for b in btns:
+        buttons.add(b)
+    await message.answer(username, reply_markup=buttons)
+    await bot.delete_message(message.chat.id, msg.message_id)
 
 
 def create_first_state():
@@ -75,7 +130,6 @@ async def delete_bot_message(call: CallbackQuery):
 async def leonid(message: types.Message):
     state = get_state()
     if state and message.from_user.id != config.ADMINS[2]:
-        await message.answer(ADMIN_MESSAGE)
         return
     rnd_message = random.choice(leonid_text)
     await message.answer(
@@ -87,7 +141,6 @@ async def leonid(message: types.Message):
 async def anya(message: types.Message):
     state = get_state()
     if state and message.from_user.id != config.ADMINS[2]:
-        await message.answer(ADMIN_MESSAGE)
         return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
@@ -97,7 +150,6 @@ async def anya(message: types.Message):
 async def anya2(message: types.Message):
     state = get_state()
     if state and message.from_user.id != config.ADMINS[2]:
-        await message.answer(ADMIN_MESSAGE)
         return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
@@ -107,7 +159,6 @@ async def anya2(message: types.Message):
 async def anya3(message: types.Message):
     state = get_state()
     if state and message.from_user.id != config.ADMINS[2]:
-        await message.answer(ADMIN_MESSAGE)
         return
     msg = random.choice(anya_list)
     await message.answer(text=msg)
@@ -145,7 +196,6 @@ async def welcome_message(message: types.Message):
 async def get_dollar(message: types.Message):
     state = get_state()
     if state and message.from_user.id != config.ADMINS[2]:
-        await message.answer(ADMIN_MESSAGE)
         return
     headers = {
         "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:97.0)"
@@ -153,7 +203,7 @@ async def get_dollar(message: types.Message):
     }
     r = requests.get(
         "https://ru.investing.com/currencies/usd-rub",
-         headers=headers
+        headers=headers
     )
     soup = BeautifulSoup(r.text, "lxml")
     data = soup.find("span", class_="text-2xl").text.strip()
