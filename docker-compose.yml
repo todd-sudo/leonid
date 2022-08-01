@@ -1,0 +1,13 @@
+version: '3'
+
+
+services:
+  bot:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    image: tg_bot_leonid
+    container_name: tg_bot_leonid
+    env_file:
+      - ./.env
+    command: python main.py

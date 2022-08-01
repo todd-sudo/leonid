@@ -164,24 +164,6 @@ async def anya3(message: types.Message):
     await message.answer(text=msg)
 
 
-async def anekdot():
-    url = "https://www.anekdot.ru/"
-    res = requests.get(url)
-    if res.status_code != 200:
-        print("error")
-    data = res.text
-    if not data:
-        print("error")
-    soup = BeautifulSoup(data, "lxml")
-    divs = soup.find_all("div", class_="text")
-    rnd_message = random.choice(divs)
-    text = rnd_message.text.strip()
-    for chid in config.CHAT_IDS:
-        await bot.send_message(
-            chat_id=int(chid), text=text, reply_markup=delete_message_keyboard
-        )
-
-
 @dp.message_handler(filters.Text(contains="ривет", ignore_case=True))
 @dp.message_handler(commands=['start', 'hello'])
 async def welcome_message(message: types.Message):
