@@ -7,11 +7,13 @@ from aiogram import executor
 from loader import dp, bot
 
 from src.handlers.birthday import check_birthday
+from src.handlers.message import get_eat
 from src import handlers
 
 
 async def scheduler():
     aioschedule.every(1).hours.do(check_birthday)
+    aioschedule.every(15).minutes.do(get_eat)
     while True:
         await aioschedule.run_pending()
         await asyncio.sleep(1)

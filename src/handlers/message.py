@@ -23,6 +23,10 @@ from ..bird.bird import find_username
 cb = get_callback_data_p_name()
 
 
+async def get_eat():
+    await bot.send_message(chat_id=-1001512195486, text="Анька возьми едуу!")
+
+
 @dp.callback_query_handler(cb.filter())
 async def get_info_on_username(call: types.CallbackQuery, callback_data: dict):
     await call.answer("Информация загружается")
@@ -132,6 +136,7 @@ async def leonid(message: types.Message):
     if state and message.from_user.id != config.ADMINS[2]:
         return
     rnd_message = random.choice(leonid_text)
+    print(message.chat.id)
     await message.answer(
         text=f"{rnd_message}",
     )
